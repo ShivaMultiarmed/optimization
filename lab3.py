@@ -28,10 +28,10 @@ def gold(f: Callable[[float], float], a: float, b: float, e: float = E, verbose:
 def solve(f):
     prev_point = numpy.array([0, 0])
     cur_point = numpy.array([10, 10])
-    f_dx = sympy.lambdify([x, y], sympy.diff(f, x))
-    f_dy = sympy.lambdify([x, y], sympy.diff(f, y))
+    df_dx = sympy.lambdify([x, y], sympy.diff(f, x))
+    df_dy = sympy.lambdify([x, y], sympy.diff(f, y))
     f = sympy.lambdify([x, y], f)
-    grad = lambda point: numpy.array([f_dx(*point), f_dy(*point)])
+    grad = lambda point: numpy.array([df_dx(*point), df_dy(*point)])
     cur_grad = grad(cur_point)
     scalar = None
     d_point = cur_point - prev_point
@@ -46,7 +46,7 @@ def solve(f):
         prev_point = cur_point
         cur_point = prev_point - t * cur_grad
         prev_grad = cur_grad
-        cur_grad = numpy.array([f_dx(*cur_point), f_dy(*cur_point)])
+        cur_grad = numpy.array([df_dx(*cur_point), df_dy(*cur_point)])
         cur_grad = grad(cur_point)
         scalar = numpy.dot(prev_grad, cur_grad)
         iteration += 1
