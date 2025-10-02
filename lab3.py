@@ -4,7 +4,7 @@ import numpy
 import sympy
 from sympy.abc import x, y
 
-E = 1e-4
+E = 1e-6
 PHI = (1 + 5 ** 0.5) / 2.0
 RESPHI = 2 - PHI
 
@@ -65,4 +65,4 @@ if __name__ == "__main__":
     print()
     print(solve(f2))  # -2 3
     print()
-    print(solve(f3))  # +-sqrt(2), 2
+    print(solve(f3))  # 2 ** 0.5, 2
