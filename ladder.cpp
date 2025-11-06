@@ -22,7 +22,6 @@ int main() {
         ladder.push_back(value);
     }
     int result = choosePath(ladder, n);
-    cout << endl;
-    cout << "Максимальная сумма: " << result << endl;
+    cout << result << endl;
     return 0;
 }
