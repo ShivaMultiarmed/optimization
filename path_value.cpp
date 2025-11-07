@@ -4,30 +4,22 @@
 
 using namespace std;
 
-int choosePath(int** field, int x, int y) {
-	if (x < 0 || y > 7) return -1;
+int choosePath(vector<vector<int>>& field, int x, int y) {
+	if (x < 0 || y > 7) return 1e9;
 	if (x == 0 && y == 7) return field[7][0];
 	int path1 = choosePath(field, x - 1, y);
 	int path2 = choosePath(field, x, y + 1);
 	int path3 = choosePath(field, x - 1, y + 1);
-	vector<int> paths = {path1, path2, path3};
-	vector<int> positivePaths;
-	copy_if(paths.begin(), paths.end(), back_inserter(positivePaths),[](int n){return n >= 0;});
-	if (positivePaths.size() == 0) return -1;
-	else return field[y][x] + *(min_element(positivePaths.begin(), positivePaths.end()));
+	return field[y][x] + min({path1, path2, path3});
 }
 
 int main() {
-	int field[8][8] = {
-        {9, 9, 9, 9, 9, 9, 1, 9},
-        {9, 9, 9, 9, 9, 1, 9, 2},
-        {9, 9, 9, 9, 9, 9, 1, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9},
-        {9, 9, 9, 9, 9, 9, 9, 9},
-        {0, 9, 9, 9, 9, 9, 9, 9}
-    };
-	cout << choosePath(field, 7, 0);
+	vector<vector<int>> field(8, vector<int>(8));
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			cin >> field[i][j];
+		}
+	}
+	cout << choosePath(field, 7, 0) << endl;
 	return 0;
 }

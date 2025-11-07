@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int choosePath(vector<int>& ladder, u_int pos) {
+int choosePath(vector<int>& ladder, int pos) {
     if (pos <= 0) return 0;
     if (pos == 1) return ladder.at(1);
     if (pos == 2) return ladder.at(2) + max(0, ladder.at(1));
@@ -13,10 +13,10 @@ int choosePath(vector<int>& ladder, u_int pos) {
 }
 
 int main() {
-    u_int n;
+    int n;
     cin >> n;
     vector<int> ladder = {0};
-    for (u_int i = 1; i <= n; i++) {
+    for (int i = 1; i <= n; i++) {
         int value;
         cin >> value;
         ladder.push_back(value);
