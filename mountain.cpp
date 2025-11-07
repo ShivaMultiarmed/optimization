@@ -14,21 +14,15 @@ int choosePath(vector<vector<int>>& mountain, int level, int cell) {
 }
 
 int main () {
-    int n = 4;
-    //cin >> n;
-    vector<vector<int>> mountain = {
-        {1},
-        {4, 3},
-        {5, 6, 7},
-        {8, 9, 0, 9}
-    };
-    /*(n);
+    int n;
+    cin >> n;
+    vector<vector<int>> mountain(n);
     for (int i = 0; i < n; i++) {
         mountain[i].resize(i + 1);
         for (int j = 0; j < i + 1; j++) {
             cin >> mountain[i][j];
         }
-    }*/
+    }
     vector<int> possibleResults(n);
     for (int i = 0; i < n; i++) {
         possibleResults[i] = choosePath(mountain, n - 1, i);

@@ -11,6 +11,8 @@
         "string": "cpp",
         "vector": "cpp",
         "ostream": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "bitset": "cpp",
+        "atomic": "cpp"
     }
 }
