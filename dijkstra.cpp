@@ -2,6 +2,7 @@
 #include<vector>
 #include<string>
 #include<algorithm>
+#include<queue>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ void read(
             input >> number;
             try {
                 graph.at(i).at(j) = stoi(number);
-            } catch (invalid_argument e) {}
+            } catch (invalid_argument& e) {}
         }
     }
     input.close();
@@ -88,7 +89,51 @@ void solve(
     }
 }
 
-int main () {
+void solveOnHeap(
+    const u_int start,
+    const vector<vector<u_int>>& graph,
+    vector<vector<u_int>>& paths,
+    vector<u_int>& distances
+) {
+    u_int n = graph.size();
+    vector<int> previousNodes(n, -1);
+    distances.at(start) = 0;
+    priority_queue<pair<u_int, u_int>, vector<pair<u_int, u_int>>, greater<>> queue;
+    queue.push({0, start});
+    while(!queue.empty()) {
+        auto [d, u] = queue.top();
+        queue.pop();
+        if (d > distances.at(u)) {
+            continue;
+        }
+        for (u_int v = 0; v < n; v++) {
+            if (graph.at(u).at(v) != INF && distances.at(u) + graph.at(u).at(v) < distances.at(v)) {
+                distances.at(v) = distances.at(u) + graph.at(u).at(v);
+                previousNodes.at(v) = u;
+                queue.push({distances.at(v), v});
+            }
+        }
+    }
+    for (u_int v = 0; v < n; v++) {
+        if (distances.at(v) == INF) {
+            continue;
+        }
+        for(int cur = v; cur != -1; cur = previousNodes.at(cur)) {
+            paths.at(v).push_back(cur);
+        }
+        reverse(paths.at(v).begin(), paths.at(v).end());
+    }
+}
+
+enum class Method {
+    REGULAR, HEAP
+};
+
+int main (int argc, char** argv) {
+    Method method = Method::REGULAR;
+    if (argv[1] == "-h") {
+        method = Method::HEAP;
+    }
     u_int n, start;
     vector<u_int> distances;
     vector<vector<u_int>> graph, paths;

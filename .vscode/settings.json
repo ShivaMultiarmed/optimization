@@ -18,6 +18,7 @@
         "iosfwd": "cpp",
         "fstream": "cpp",
         "new": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "queue": "cpp"
     }
 }
