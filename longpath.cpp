@@ -1,4 +1,4 @@
-#include<iostream>
+/*#include<iostream>
 #include<vector>
 #include<stack>
 #include<algorithm>
@@ -49,5 +49,48 @@ int main () {
     }
     int longestPath = *(max_element(longestPaths.begin(), longestPaths.end()));
     cout << longestPath << endl;
+    return 0;
+ }
+
+ */
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+int main() {
+
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> graph(n + 1);
+    vector<int> indeg(n + 1, 0);
+
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        graph[u].push_back(v);
+        indeg[v]++;
+    }
+
+    queue<int> q;
+    for (int i = 1; i <= n; i++)
+        if (indeg[i] == 0)
+            q.push(i);
+
+    vector<int> dp(n + 1, 0);
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+
+        for (int v : graph[u]) {
+            dp[v] = max(dp[v], dp[u] + 1);
+            if (--indeg[v] == 0)
+                q.push(v);
+        }
+    }
+
+    cout << *max_element(dp.begin(), dp.end()) << "\n";
     return 0;
 }

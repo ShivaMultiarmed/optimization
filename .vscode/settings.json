@@ -13,6 +13,11 @@
         "ostream": "cpp",
         "initializer_list": "cpp",
         "bitset": "cpp",
-        "atomic": "cpp"
+        "atomic": "cpp",
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp",
+        "new": "cpp",
+        "iterator": "cpp"
     }
 }

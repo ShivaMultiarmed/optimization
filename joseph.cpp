@@ -1,21 +1,18 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-
+#include <fstream>
 using namespace std;
 
-int main () {
-    int N, P, p = 0;
-    cin >> N;
-    cin >> P;
-    vector<int> boys;
-    for (int i = 0; i < N; i++) {
-        boys.push_back(i + 1);
+int main() {
+    ifstream input("joseph.in");
+    int N, P;
+    input >> N >> P;
+    input.close();
+
+    int survivor = 0; 
+    for (int n = 2; n <= N; n++) {
+        survivor = (survivor + P) % n;
     }
-    do {
-        p = (p + P - 1) % boys.size();
-        boys.erase(boys.begin() + p);
-    } while(boys.size() > 1);
-    cout << boys[0] << endl;
-    return 0;
+
+    ofstream output("joseph.out");
+    output << survivor + 1 << endl; 
+    output.close();
 }
