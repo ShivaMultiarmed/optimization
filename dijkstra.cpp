@@ -1,6 +1,7 @@
 #include<fstream>
 #include<vector>
 #include<string>
+#include<algorithm>
 
 using namespace std;
 
@@ -10,11 +11,13 @@ void read(
     u_int& n,
     u_int& start,
     vector<vector<u_int>>& graph,
+    vector<vector<u_int>>& paths,
     vector<u_int>& distances
 ) {
     ifstream input("dijkstra.in");
     input >> n >> start;
     graph = vector(n, vector(n, INF));
+    paths = vector(n, vector<u_int>());
     distances = vector(n, INF);
     for (u_int i = 0; i < n; i++) {
         for (u_int j = 0; j < n; j++) {
@@ -28,10 +31,20 @@ void read(
     input.close();
 }
 
-void write(const vector<u_int>& distances) {
+void write(
+    const vector<vector<u_int>>& paths,
+    const vector<u_int>& distances
+) {
     ofstream output("dijkstra.out");
-    for (u_int distance : distances) {
-        output << distance << " ";
+    for (u_int v = 0; v < paths.size(); v++) {
+        output << v << ": ";
+        for (u_int cur = 0; cur < paths.at(v).size(); cur++) {
+            output << paths.at(v).at(cur) << " ";
+            if (cur < paths.at(v).size() - 1) {
+                output << "-> ";
+            }
+        }
+        output << "(" << distances.at(v) << ")" << endl;
     }
     output.close();
 }
@@ -39,10 +52,12 @@ void write(const vector<u_int>& distances) {
 void solve(
     const u_int start,
     const vector<vector<u_int>>& graph,
+    vector<vector<u_int>>& paths,
     vector<u_int>& distances
 ) {
     u_int n = graph.size();
     vector<bool> visited(n, false);
+    vector<int> previousNodes(n, -1);
     distances.at(start) = 0;
     for (u_int i = 0; i < n - 1; i++) {
         int u = -1;
@@ -58,17 +73,27 @@ void solve(
         for (u_int v = 0; v < n; v++) {
             if (graph.at(u).at(v) != INF && distances.at(u) != INF && distances.at(u) + graph.at(u).at(v) < distances.at(v)) {
                 distances.at(v) = distances.at(u) + graph.at(u).at(v);
+                previousNodes.at(v) = u;
             }
         }
+    }
+    for (u_int v = 0; v < n; v++) {
+        if (distances.at(v) == INF) {
+            continue;
+        }
+        for(int cur = v; cur != -1; cur = previousNodes.at(cur)) {
+            paths.at(v).push_back(cur);
+        }
+        reverse(paths.at(v).begin(), paths.at(v).end());
     }
 }
 
 int main () {
     u_int n, start;
     vector<u_int> distances;
-    vector<vector<u_int>> graph;
-    read(n, start, graph, distances);
-    solve(start, graph, distances);
-    write(distances);
+    vector<vector<u_int>> graph, paths;
+    read(n, start, graph, paths, distances);
+    solve(start, graph, paths, distances);
+    write(paths, distances);
     return 0;
 }
