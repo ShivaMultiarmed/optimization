@@ -138,7 +138,11 @@ int main (int argc, char** argv) {
     vector<u_int> distances;
     vector<vector<u_int>> graph, paths;
     read(n, start, graph, paths, distances);
-    solve(start, graph, paths, distances);
+    if (method == Method::REGULAR) {
+        solve(start, graph, paths, distances);
+    } else {
+        solveOnHeap(start, graph, paths, distances);
+    }
     write(paths, distances);
     return 0;
 }
