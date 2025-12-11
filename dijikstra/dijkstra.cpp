@@ -1,8 +1,10 @@
 #include<fstream>
+#include<iostream>
 #include<vector>
 #include<string>
 #include<algorithm>
 #include<queue>
+#include<cmath>
 
 using namespace std;
 
@@ -79,7 +81,7 @@ void solve(
         }
     }
     for (u_int v = 0; v < n; v++) {
-        if (distances.at(v) == INF) {
+        if (distances.at(v) >= INF) {
             continue;
         }
         for(int cur = v; cur != -1; cur = previousNodes.at(cur)) {
@@ -87,6 +89,48 @@ void solve(
         }
         reverse(paths.at(v).begin(), paths.at(v).end());
     }
+}
+
+u_int randomNumber () {
+    return rand() % (10 - 1) + 1;
+}
+
+void generate(
+    u_int& n,
+    u_int& start, 
+    vector<vector<u_int>>& graph,
+    vector<vector<u_int>>& paths,
+    vector<u_int>& distances
+) {
+    fstream file("dijkstra.in", ios::in | ios::app);
+    file >> n >> start;
+    u_int m = sqrt(n);
+    graph = vector(n, vector(n, INF));
+    paths = vector(n, vector<u_int>());
+    distances = vector(n, INF);
+    for (u_int r = 0; r < m; r++) {
+        for (u_int c = 0; c < m; c++) {
+            u_int u = r * m + c;
+            if (c < m - 1) {
+                u_int v = r * m + c + 1;
+                graph[u][v] = graph[v][u] = randomNumber();
+            }
+            if (r < m - 1) {
+                u_int v = (r + 1) * m + c;
+                graph[u][v] = graph[v][u] = randomNumber();
+            }
+        }
+    }
+    for (u_int i = 0; i < m * m; i++) {
+        graph[i][i] = 0;
+    }
+    for (u_int i = 0; i < m * m; i++) {
+        for (u_int j = 0; j < m * m; j++) {
+            file << (graph[i][j] < INF ? to_string(graph[i][j]) : "-") << " ";
+        }
+        file << endl;
+    }
+    file.close();
 }
 
 vector<vector<pair<u_int, u_int>>> matrixToList (const vector<vector<u_int>>& matrix) {
@@ -103,12 +147,11 @@ vector<vector<pair<u_int, u_int>>> matrixToList (const vector<vector<u_int>>& ma
 
 void solveOnHeap(
     const u_int start,
-    const vector<vector<u_int>>& graph,
+    const vector<vector<pair<u_int, u_int>>>& graph,
     vector<vector<u_int>>& paths,
     vector<u_int>& distances
 ) {
     u_int n = graph.size();
-    vector<vector<pair<u_int, u_int>>> graphListed = matrixToList(graph);
     vector<int> previousNodes(n, -1);
     distances[start] = 0;
     priority_queue<pair<u_int, u_int>, vector<pair<u_int, u_int>>, greater<>> queue;
@@ -119,7 +162,7 @@ void solveOnHeap(
         if (d > distances[u]) {
             continue;
         }
-        for (auto [d, v] : graphListed[u]) {
+        for (auto [d, v] : graph[u]) {
             if (distances[u] + d < distances[v]) {
                 distances[v] = distances[u] + d;
                 previousNodes[v] = u;
@@ -127,14 +170,16 @@ void solveOnHeap(
             }
         }
     }
+    u_int hasLongPath = 0;
     for (u_int v = 0; v < n; v++) {
-        if (distances.at(v) == INF) {
+        if (distances[v] >= INF) {
+            hasLongPath++;
             continue;
         }
-        for(int cur = v; cur != -1; cur = previousNodes.at(cur)) {
-            paths.at(v).push_back(cur);
+        for(int cur = v; cur != -1; cur = previousNodes[cur]) {
+            paths[v].push_back(cur);
         }
-        reverse(paths.at(v).begin(), paths.at(v).end());
+        reverse(paths[v].begin(), paths[v].end());
     }
 }
 
@@ -142,19 +187,32 @@ enum class Method {
     REGULAR, HEAP
 };
 
+enum class InputSource {
+    FILE, GENERATION
+};
+
 int main (int argc, char** argv) {
     Method method = Method::REGULAR;
-    if (argv[1] == "-h") {
-        method = Method::HEAP;
+    InputSource input = InputSource::FILE;
+    for (u_int i = 1; i < argc; i++) {
+        if (string(argv[i]) == "-h") {
+            method = Method::HEAP;
+        } else if (string(argv[i]) == "-g") {
+            input = InputSource::GENERATION;
+        }
     }
     u_int n, start;
     vector<u_int> distances;
     vector<vector<u_int>> graph, paths;
-    read(n, start, graph, paths, distances);
+    if (input == InputSource::FILE) {
+        read(n, start, graph, paths, distances);
+    } else {
+        generate(n, start, graph, paths, distances);
+    }
     if (method == Method::REGULAR) {
         solve(start, graph, paths, distances);
     } else {
-        solveOnHeap(start, graph, paths, distances);
+        solveOnHeap(start, matrixToList(graph), paths, distances);
     }
     write(paths, distances);
     return 0;
